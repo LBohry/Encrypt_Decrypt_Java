@@ -24,6 +24,16 @@ public class Main implements ActionListener {
 
         encrypt.addActionListener(this);
         decrypt.addActionListener(this);
+
+
+        panel = new JPanel();
+
+        panel.add(textField);
+        panel.add(encrypt);
+        panel.add(decrypt);
+
+        frame.add(panel);
+        frame.setVisible(true);
     }
     public static void main(String[] args) {
         Main e = new Main();
