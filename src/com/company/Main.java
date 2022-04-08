@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Main implements ActionListener {
     JFrame frame;
@@ -12,9 +16,13 @@ public class Main implements ActionListener {
     JButton decrypt;
 
     JPanel panel;
+    boolean encrypted=false;
+    String first_text;
+
 
 
     Main(){
+
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700,420);
@@ -53,6 +61,37 @@ public class Main implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if (e.getSource()==encrypt){
+            if (textField.getText().length()==0){
+                showMessageDialog(frame, "Cannot encrypt empty string!");
+            }
+            first_text=textField.getText();
+            byte[] encryptArray = java.util.Base64.getEncoder().encode(textField.getText().getBytes());
+            String encstr = null;
+            try {
+                encstr = new String(encryptArray,"UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                ex.printStackTrace();
+            }
+            textField.setText(encstr);
+            encrypted = true;
+        }
+        else if(e.getSource()==decrypt && encrypted==false){
+            showMessageDialog(frame, "The string is not yet encrypted!");
+        }
+        else if(e.getSource()==decrypt && encrypted==true){
+            if (textField.getText()==first_text){
+                showMessageDialog(frame, "This is the original text!");
+            }
+            byte[] dectryptArray = textField.getText().getBytes();
+            byte[] decarray = Base64.getDecoder().decode(dectryptArray);
+            String decstr = null;
+            try {
+                decstr = new String(decarray,"UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                ex.printStackTrace();
+            }
+            textField.setText(decstr);
+        }
     }
 }
