@@ -1,7 +1,6 @@
 package com.company;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
@@ -18,8 +17,8 @@ public class Main implements ActionListener {
     JPanel panel;
     boolean encrypted=false;
     String first_text;
-
-
+    int count = 0;
+    boolean stop=false;
 
     Main(){
 
@@ -55,43 +54,82 @@ public class Main implements ActionListener {
 
         frame.setVisible(true);
     }
+
+
+    public class Global
+    {
+        public String first_text;
+
+        public String get_text(){
+            return first_text;
+        }
+        public void setString(String first_text){
+            this.first_text = first_text;
+        }
+    }
+
+    public Global g = new Global();
+
     public static void main(String[] args) {
         Main e = new Main();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+       // if (textField.getText().length()!=0 && count==0) {
+       //     g.setString(textField.getText());
+       // }
         if (e.getSource()==encrypt){
-            if (textField.getText().length()==0){
+            if (textField.getText().length()==0) {
                 showMessageDialog(frame, "Cannot encrypt empty string!");
             }
-            first_text=textField.getText();
-            byte[] encryptArray = java.util.Base64.getEncoder().encode(textField.getText().getBytes());
-            String encstr = null;
-            try {
-                encstr = new String(encryptArray,"UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                ex.printStackTrace();
+            else {
+                if (count==0){
+                   g.setString(textField.getText());
+                }
+                byte[] encryptArray = java.util.Base64.getEncoder().encode(textField.getText().getBytes());
+                String encstr = null;
+                try {
+                    encstr = new String(encryptArray, "UTF-8");
+                } catch (UnsupportedEncodingException ex) {
+                    ex.printStackTrace();
+                }
+                textField.setText(encstr);
+                encrypted = true;
+                count++;
             }
-            textField.setText(encstr);
-            encrypted = true;
         }
-        else if(e.getSource()==decrypt && encrypted==false){
-            showMessageDialog(frame, "The string is not yet encrypted!");
-        }
-        else if(e.getSource()==decrypt && encrypted==true){
-            if (textField.getText()==first_text){
-                showMessageDialog(frame, "This is the original text!");
+
+        else if(e.getSource()==decrypt){
+            System.out.println(g.get_text());
+            if (encrypted==false){
+                showMessageDialog(frame, "The string is not yet encrypted!");
             }
-            byte[] dectryptArray = textField.getText().getBytes();
-            byte[] decarray = Base64.getDecoder().decode(dectryptArray);
-            String decstr = null;
-            try {
-                decstr = new String(decarray,"UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                ex.printStackTrace();
+            else if (encrypted){
+                if (stop==true){
+                    showMessageDialog(frame, "This is the original text!");
+                }
+                else {
+                    byte[] dectryptArray = textField.getText().getBytes();
+                    byte[] decarray = Base64.getDecoder().decode(dectryptArray);
+                    String decstr = null;
+                    try {
+                        decstr = new String(decarray, "UTF-8");
+                    } catch (UnsupportedEncodingException ex) {
+                        ex.printStackTrace();
+                    }
+                    textField.setText(decstr);
+
+                    System.out.println(decstr);
+                    System.out.println(textField.getText());
+                    System.out.println(g.get_text());
+                    if (textField.getText()==decstr && decstr == g.get_text()){
+                        stop=true;
+                        showMessageDialog(frame, "This is the original text!");                    }
+                } //still not working
             }
-            textField.setText(decstr);
         }
+
+
     }
 }
